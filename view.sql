@@ -1,5 +1,6 @@
 -- ----------------------------
--- previously created views of WEATHER_HOURLY_3PM and WEATHER_HOURLY_9AM were replaced by the pipelined function get_hourly_data()
+-- previously created views of WEATHER_HOURLY_3PM and WEATHER_HOURLY_9AM 
+-- were replaced by the pipelined function get_hourly_data()
 -- 
 -- the function IS_RAINING() was added to VIEW weather_details 
 -- to determine whether precipitation will occur on a specified date ('Yes') or not ('No'). 
@@ -31,11 +32,11 @@ SELECT
        WH3PM.CLOUD AS Cloud3pm,
        WH9AM.TEMPERATURE AS Temp9am,
        WH3PM.TEMPERATURE AS Temp3pm,
-       CASE WHEN WEATHER_DAILY.RAINFALL > 1 THEN 'Yes' ELSE 'No' END AS RainToday,
-       IS_RAINING(WEATHER_DAILY.WEATHER_DATE, WEATHER_DAILY.LOCATION_CODE, 1) as RainToday_CHECK,
+       -- CASE WHEN WEATHER_DAILY.RAINFALL > 1 THEN 'Yes' ELSE 'No' END AS RainToday_old,
+       IS_RAINING(WEATHER_DAILY.WEATHER_DATE, WEATHER_DAILY.LOCATION_CODE, 1) as RainToday,
        WEATHER_DAILY.RAINFALL_TOMORROW as RISK_MM,
-       CASE WHEN WEATHER_DAILY.RAINFALL_TOMORROW > 1 THEN 'Yes' ELSE 'No' END as RainTomorrow,
-       IS_RAINING(WEATHER_DAILY.WEATHER_DATE, WEATHER_DAILY.LOCATION_CODE, 0) as RainTomorrow_CHECK
+       -- CASE WHEN WEATHER_DAILY.RAINFALL_TOMORROW > 1 THEN 'Yes' ELSE 'No' END as RainTomorrow_old,
+       IS_RAINING(WEATHER_DAILY.WEATHER_DATE, WEATHER_DAILY.LOCATION_CODE, 0) as RainTomorrow
 FROM WEATHER_DAILY
 JOIN LOCATIONS ON LOCATIONS.LOCATION_NAME = WEATHER_DAILY.location_code
 LEFT JOIN (
