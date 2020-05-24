@@ -11,7 +11,7 @@ Insert into WIND_DIRECTION (WIND_DIRECTION) values ('W');
 
 Insert into staff (ID, FIRST_NAME) values (id_staff_seq.NEXTVAL, 'Jack');
 Insert into staff (ID, FIRST_NAME) values (id_staff_seq.NEXTVAL, 'Sofia');
-Insert into staff (ID, FIRST_NAME) values (id_staff_seq.NEXTVAL, 'Luke');
+Insert into staff (ID, FIRST_NAME) values (id_staff_seq.NEXTVAL, 'Bob');
 
 Insert into WEATHER_DAILY (WEATHER_DATE,LOCATION_CODE,RAINFALL,EVAPORATION,SUNSHINE,WIND_GUST_DIR,WIND_GUST_SPEED,RAINFALL_TOMORROW) values (to_date('06.01.2017','DD.MM.RRRR'),'Adelaide',29.6,10.2,0.3,'S',41,15.2);
 Insert into WEATHER_DAILY (WEATHER_DATE,LOCATION_CODE,RAINFALL,EVAPORATION,SUNSHINE,WIND_GUST_DIR,WIND_GUST_SPEED,RAINFALL_TOMORROW) values (to_date('07.01.2017','DD.MM.RRRR'),'Canberra',0.2,1.2,10.1,'E',28,0);
