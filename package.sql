@@ -1,14 +1,34 @@
 CREATE OR REPLACE package weather_package is
+
     PROCEDURE add_Location_Chief(employer_first_name IN varchar2, lacation_name IN varchar2);
 
+    TYPE t_hourly is RECORD
+     (
+      location_code  VARCHAR2(50),
+        weather_date   DATE,
+        time number,
+        wind_dir       VARCHAR2(3),
+        wind_speed     NUMBER(5, 2),
+        humidity       NUMBER(3),
+        pressure       NUMBER(10, 2),
+        cloud          NUMBER,
+        temperature    NUMBER(5, 2)
+     );
+     
+     TYPE t_hourly_table is TABLE OF t_hourly;
+    
+    function get_hourly_data(v_location in varchar, v_date in date)
+        return t_hourly_table pipelined; 
+
     FUNCTION is_raining(
-    v_date WEATHER_DAILY.WEATHER_DATE%TYPE,
-    v_location_code WEATHER_DAILY.LOCATION_CODE%TYPE,
-    is_today integer default 1
+        v_date WEATHER_DAILY.WEATHER_DATE%TYPE,
+        v_location_code WEATHER_DAILY.LOCATION_CODE%TYPE,
+        is_today integer default 1
     ) RETURN varchar2;
-    -- pipelined;
 END weather_package;
+
 /
+
 CREATE OR REPLACE package body weather_package is
     Procedure add_Location_Chief(employer_first_name IN varchar2, lacation_name IN varchar2)
     IS
@@ -48,19 +68,29 @@ CREATE OR REPLACE package body weather_package is
     
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            -- raise_application_error(-20001,'Unique constraint violated: or location ' || lacation_name || ' already has chief, or employee ' || employer_first_name || ' already is chief.');
             DBMS_OUTPUT.put_line('Unique constraint violated: or location ' || lacation_name || ' already has chief, or employee ' || employer_first_name || ' already is chief.');
         WHEN no_location THEN
-            -- raise_application_error(-20001,'Location ' || lacation_name || ' not found.');
             DBMS_OUTPUT.put_line('Location ' || lacation_name || ' not found.');
         WHEN no_employer THEN
-            -- raise_application_error(-20001,'Employee ' || employer_first_name || ' not found.');
             DBMS_OUTPUT.put_line('Employee ' || employer_first_name || ' not found.');
         WHEN OTHERS THEN
-            -- raise_application_error(-20001,'An error was encountered - '||SQLCODE||' -ERROR- '||SQLERRM);
             DBMS_OUTPUT.put_line('An error was encountered - '||SQLCODE||' -ERROR- '||SQLERRM);
     END add_Location_Chief;   
     
+    function get_hourly_data(v_location in varchar, v_date in date)
+          return t_hourly_table pipelined as
+    begin
+      for i in (
+            select LOCATION_CODE, WEATHER_DATE, TIME, WIND_DIR, WIND_SPEED, HUMIDITY, PRESSURE, CLOUD, TEMPERATURE
+            from WEATHER_HOURLY
+            where WEATHER_DATE=v_date and LOCATION_CODE = v_location
+        )
+     loop
+       pipe row(i);
+      end loop;
+     return;
+    end get_hourly_data;
+
     FUNCTION is_raining(
     v_date WEATHER_DAILY.WEATHER_DATE%TYPE,
     v_location_code WEATHER_DAILY.LOCATION_CODE%TYPE,
